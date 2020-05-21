@@ -1,5 +1,6 @@
-import commonjs from 'rollup-plugin-commonjs';
-import resolve from 'rollup-plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import copy from "rollup-plugin-copy";
 import replace from '@rollup/plugin-replace';
 import serve from 'rollup-plugin-serve';
 import typescript from 'rollup-plugin-typescript2';
@@ -37,7 +38,7 @@ export default {
 
         //  Parse our .ts source files
         resolve({
-            extensions: [ '.ts', '.tsx' ]
+            extensions: ['.ts', '.tsx']
         }),
 
         //  We need to convert the Phaser 3 CJS modules into a format Rollup can use:
@@ -46,15 +47,25 @@ export default {
                 'node_modules/eventemitter3/**',
                 'node_modules/phaser/**'
             ],
-            exclude: [ 
+            exclude: [
                 'node_modules/phaser/src/polyfills/requestAnimationFrame.js'
             ],
             sourceMap: true,
             ignoreGlobal: true
         }),
 
+        copy({
+            targets: [
+                { src: 'src/index.html', dest: 'dist/' },
+                { src: 'assets/**/*', dest: 'dist/assets' }
+            ]
+        }),
+
         //  See https://www.npmjs.com/package/rollup-plugin-typescript2 for config options
-        typescript(),
+        typescript({
+            typescript: require('typescript'),
+            objectHashIgnoreUnknownHack: true
+        }),
 
         //  See https://www.npmjs.com/package/rollup-plugin-serve for config options
         serve({
