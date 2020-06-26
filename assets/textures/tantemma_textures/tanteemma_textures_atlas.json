@@ -1,0 +1,918 @@
+{
+    "frames": [
+        {
+            "filename": "gras_1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "gras_2",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "gras_3",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "gras_4",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "gras_5",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "gras_sidewalk",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_top_corner",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_top_end",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelves_top_end",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelves_top_corner",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelves_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_top_corner1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_top_end1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_top1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_side",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelves_top_corner1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelves_top_end1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelves_top1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "doubleshelves_side",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "sidewalk_2",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "sidewalk_corner",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "sidewalk_1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_side_bottom",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "doubleshelves_bottom_corner",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "doubleshelves_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "doubleshelves_top_corner",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_2",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_3",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "street",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "street_marks",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "floor",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_bottom_1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_4",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_5",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "doubleshelves_top_corner1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_bottom_empty",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_empty",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_bottom_2",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shelve_bottom_3",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_side_1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_side_2",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_middle",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_bottom_corner",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_bottom_end",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "wall_bottom_middle",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "plant_bottom",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "plant_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_side_empty",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_empty",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_side_bottom",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_bottom",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_side",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_side_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 192
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "sign_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 0,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "sign_bottom",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 32,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "register_bottom_r",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 64,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "register_top_l",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 96,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "register_top_r",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 128,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "register_bottom_l",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 160,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "puddle",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 192,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "door",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 224,
+                "y": 224
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_top_empty",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 256,
+                "y": 0
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "basket_top",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 256,
+                "y": 32
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shadow_2",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 256,
+                "y": 64
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shadow_3",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 256,
+                "y": 96
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shadow_4",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 256,
+                "y": 128
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        },
+        {
+            "filename": "shadow_1",
+            "frame": {
+                "w": 32,
+                "h": 32,
+                "x": 256,
+                "y": 160
+            },
+            "anchor": {
+                "x": 0.5,
+                "y": 0.5
+            }
+        }
+    ],
+    "meta": {
+        "description": "Atlas generado con Atlas Packer Gamma V2",
+        "web": "https://gammafp.github.io/atlas-packer-phaser/"
+    }
+}
