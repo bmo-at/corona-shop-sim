@@ -1,96 +1,67 @@
-import NPC from "../npc";
+import { CoronaShopSimScene } from "../typings/scene"
+import NPC from "../entities/npc"
 
-export default class TanteEmma extends Phaser.Scene {
-    player
-    cursors: Phaser.Types.Input.Keyboard.CursorKeys
+export default class TanteEmma extends CoronaShopSimScene {
 
     constructor() {
         super('tante_emma');
     }
 
     preload() {
-        this.load.spritesheet("player_sprite", "../../assets/Player_Anim1.png", {
-            frameWidth: 32,
-            frameHeight: 36
-        })
-        this.load.spritesheet("npc_sprite", "../../assets/npc_sprite.png", {
-            frameWidth: 32,
-            frameHeight: 32
-        })
+
+        super.preload()
 
         this.load.image("textures", "../../assets/tante_emma_textures.png")
-        
         this.load.tilemapTiledJSON("map", "../../assets/tante_emma_map.json")
+        this.load.atlas("test", "../../assets/test.png", "../../assets/test_atlas.json")
     }
 
     create() {
-        const map = this.make.tilemap({ key: "map" })
-        const tileset = map.addTilesetImage("tante_emma_tileset", "textures")
+        super.create()
 
-        const backgroundLayer = map.createStaticLayer("Background", tileset)
-        const floorLayer = map.createStaticLayer("Floor", tileset)
-        const wallsLayer = map.createStaticLayer("Walls", tileset)
-        const wallsbehindPlayerLayer = map.createStaticLayer("Walls behind P", tileset)
-        const shelvesLayer = map.createStaticLayer("Shelves", tileset)
-        const shelvesbehindPlayerLayer = map.createStaticLayer("Shelves behind P", tileset)
-        const registerLayer = map.createStaticLayer("Register", tileset)
+        this.shelves.push(...this.map
+            .createFromObjects(
+                "Shelves",
+                "bottom_half_shelf_1",
+                { depth: 3, key: "test", frame: "row-8-col-8" }
+            ))
+        this.shelves.push(...this.map
+            .createFromObjects(
+                "Shelves",
+                "bottom_half_shelf_2",
+                { depth: 3, key: "test", frame: "row-10-col-2" }
+            ))
+        this.shelves.push(...this.map
+            .createFromObjects(
+                "Shelves",
+                "top_shelf",
+                { depth: 3, key: "test", frame: "row-3-col-6", }
+            ))
+        this.shelves.push(...this.map
+            .createFromObjects(
+                "Shelves",
+                "top_shelf_end",
+                { depth: 3, key: "test", frame: "row-5-col-6" }
+            ))
+        this.shelves.push(...this.map
+            .createFromObjects(
+                "Shelves",
+                "side_shelf",
+                { depth: 3, key: "test", frame: "row-9-col-5" }
+            ))
+        let shelvesGroup = new Phaser.GameObjects.Group(this, ...this.shelves)
+        // shelvesGroup.se
+        this.physics.add.collider(shelvesGroup, this.player.sprite)
 
-        wallsLayer.setCollisionByProperty({ collides: true });
-        wallsLayer.setDepth(10);
-        shelvesLayer.setCollisionByProperty({ collides: true });
-        shelvesLayer.setDepth(10);
-        registerLayer.setCollisionByProperty({ collides: true });
-        registerLayer.setDepth(10);
-
-        const spawnPointCashier = map.findObject("Objects", obj => obj.name === "Player Spawn");
-        const spawnPointNPC1 = map.findObject("Objects", obj => obj.name === "NPC Spawn 1");
-        const spawnPointNPC2 = map.findObject("Objects", obj => obj.name === "NPC Spawn 2");
-
-        this.player = this.physics.add.sprite((spawnPointCashier as any).x, (spawnPointCashier as any).y, "player_sprite", 0)
-
-        let npc1 = NPC((spawnPointNPC1 as any).x, (spawnPointNPC1 as any).y, this)
-        let npc2 = NPC((spawnPointNPC2 as any).x, (spawnPointNPC2 as any).y, this)
-
-        this.anims.create({
-            key: "idle",
-            frames: this.anims.generateFrameNumbers("player_sprite", { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1
-        })
-
-        this.player.play("idle");
-
-        this.physics.add.collider(this.player, wallsLayer);
-        this.physics.add.collider(this.player, shelvesLayer);
-        this.physics.add.collider(this.player, registerLayer);
-
-        const camera = this.cameras.main;
-        camera.startFollow(this.player);
-        camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-        this.cursors = this.input.keyboard.createCursorKeys();
+        //WIP
+        let registerCollider = this.map
+            .findObject("Objects", obj => obj.name === "RegisterCollider")
+        let test = this.physics.add.group(registerCollider)
+        this.physics.add
+            .collider(this.player.sprite, test, () => { console.log("TEST") })
     }
 
-    update() {
-        const speed = 100;
-        // Stop any previous movement from the last frame
-        this.player.body.setVelocity(0);
-
-        // Horizontal movement
-        if (this.cursors.left.isDown) {
-            this.player.body.setVelocityX(-speed);
-        } else if (this.cursors.right.isDown) {
-            this.player.body.setVelocityX(speed);
-        }
-
-        // Vertical movement
-        if (this.cursors.up.isDown) {
-            this.player.body.setVelocityY(-speed);
-        } else if (this.cursors.down.isDown) {
-            this.player.body.setVelocityY(speed);
-        }
-
-        // Normalize and scale the velocity so that player can't move faster along a diagonal
-        this.player.body.velocity.normalize().scale(speed);
+    update(time: number, delta: number) {
+        super.update(time, delta)
     }
 }

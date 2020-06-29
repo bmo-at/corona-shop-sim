@@ -19,11 +19,14 @@
         "url": "https://github.com/bmo-at/corona-shop-sim/issues"
     },
     "homepage": "https://github.com/bmo-at/corona-shop-sim#readme",
-    "dependencies": {},
+    "dependencies": {
+        "phaser3-rex-plugins": "^1.1.19"
+    },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^12",
         "@rollup/plugin-node-resolve": "^8",
         "@rollup/plugin-replace": "^2.3.0",
+        "@types/webpack": "^4.41.17",
         "copy-webpack-plugin": "^6.0.2",
         "phaser": "^3.22.0",
         "rollup": "^2",
