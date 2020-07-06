@@ -1,7 +1,11 @@
 import { Player as PlayerInterface } from "../entities/player"
 import Player from "../entities/player"
+import { Inspector as InspectorInterface } from "../entities/inspector"
+import Inspector from "../entities/inspector"
 import { NPC } from "../entities/npc"
 import { GameLoop as GameLoopInterface } from "../entities/gameLoop"
+import Shelf from "../entities/shelf"
+import { Shelf as ShelfInterface } from "../entities/shelf"
 import GameLoop from "../entities/gameLoop"
 
 export class CoronaShopSimScene extends Phaser.Scene {
@@ -15,6 +19,8 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
     declare player: PlayerInterface
     npcs: { [key: string]: NPC } = {}
+    declare inspector: InspectorInterface
+    initialInspectorFlag = true
 
     declare cursors: Phaser.Types.Input.Keyboard.CursorKeys
 
@@ -25,14 +31,22 @@ export class CoronaShopSimScene extends Phaser.Scene {
     declare camera: Phaser.Cameras.Scene2D.Camera
 
     declare spawnPoints: { [key: string]: Phaser.GameObjects.GameObject }
-    shelves: Phaser.GameObjects.Sprite[] = []
+    declare checkPoints: { [key: string]: Phaser.GameObjects.GameObject }
+    declare colliders: { [key: string]: Phaser.GameObjects.GameObject }
+    declare shelves: { [key: string]: ShelfInterface }
     declare gameLoop: GameLoopInterface
+
+    declare store: {
+        graphics: Phaser.GameObjects.Graphics
+        rectangle: Phaser.Geom.Rectangle
+    }
 
     //#endregion
 
     pause() {
         this.gameLoop.paused = true
         this.player.sprite.anims.pause()
+        this.inspector.sprite?.anims.pause()
         for (const npc_id in this.npcs) {
             if (this.npcs.hasOwnProperty(npc_id)) {
                 const npc = this.npcs[npc_id]
@@ -41,7 +55,8 @@ export class CoronaShopSimScene extends Phaser.Scene {
         }
 
         //Set Velocities to 0
-        (this.player.sprite.body as Phaser.Physics.Arcade.Body).setVelocity(0)
+        (this.player.sprite.body as Phaser.Physics.Arcade.Body).setVelocity(0);
+        (this.inspector.sprite?.body as Phaser.Physics.Arcade.Body).setVelocity(0)
         for (const npc_id in this.npcs) {
             if (this.npcs.hasOwnProperty(npc_id)) {
                 const npc = this.npcs[npc_id];
@@ -53,6 +68,7 @@ export class CoronaShopSimScene extends Phaser.Scene {
     unpause() {
         this.gameLoop.paused = false
         this.player.sprite.anims.resume()
+        this.inspector.sprite?.anims.resume()
         for (const npc_id in this.npcs) {
             if (this.npcs.hasOwnProperty(npc_id)) {
                 const npc = this.npcs[npc_id];
@@ -70,18 +86,36 @@ export class CoronaShopSimScene extends Phaser.Scene {
         //#region Map Initialization
 
         this.map = this.make.tilemap({ key: "map" })
-        this.tileset = this.map.addTilesetImage("tante_emma_tileset", "textures")
+        this.tileset = this.map.addTilesetImage("tante_emma_textures", "textures")
         this.mapLayers = {
             background: this.map.createDynamicLayer("Background", this.tileset).setDepth(1),
             shadows: this.map.createDynamicLayer("Shadows", this.tileset).setDepth(1),
             midground: this.map.createDynamicLayer("Midground", this.tileset).setCollisionByProperty({ collides: true }).setDepth(2),
-            foreground: this.map.createDynamicLayer("Foreground", this.tileset).setCollisionByProperty({ collides: true }).setDepth(3)
+            foreground: this.map.createDynamicLayer("Foreground", this.tileset).setCollisionByProperty({ collides: true }).setDepth(3),
+            effects: this.map.createBlankDynamicLayer("Effects", this.tileset).setDepth(3)
         }
 
         this.spawnPoints = {
-            Cashier: this.map.findObject("Objects", obj => obj.name === "Player Spawn"),
-            NPC1: this.map.findObject("Objects", obj => obj.name === "NPC Spawn 1"),
-            NPC2: this.map.findObject("Objects", obj => obj.name === "NPC Spawn 2")
+            Player: this.map.findObject("Spawnpoints", obj => obj.name === "Player"),
+            NPC1: this.map.findObject("Spawnpoints", obj => obj.name === "NPC1"),
+            NPC2: this.map.findObject("Spawnpoints", obj => obj.name === "NPC2")
+        }
+
+        this.checkPoints = {
+            Register: this.map.findObject("Checkpoints", obj => obj.name === "Register"),
+            Hallway: this.map.findObject("Checkpoints", obj => obj.name === "Hallway"),
+            Hallway2: this.map.findObject("Checkpoints", obj => obj.name === "Hallway2"),
+            FarmUpstate: this.map.findObject("Checkpoints", obj => obj.name === "FarmUpstate"),
+            Entrance: this.map.findObject("Checkpoints", obj => obj.name === "Entrance"),
+            Hygiene: this.map.findObject("Checkpoints", obj => obj.name === "Hygiene"),
+            Cereal: this.map.findObject("Checkpoints", obj => obj.name === "Cereal"),
+            Bread: this.map.findObject("Checkpoints", obj => obj.name === "Bread"),
+            Meat: this.map.findObject("Checkpoints", obj => obj.name === "Meat"),
+            Drinks: this.map.findObject("Checkpoints", obj => obj.name === "Drinks"),
+            Produce: this.map.findObject("Checkpoints", obj => obj.name === "Produce"),
+            Fish: this.map.findObject("Checkpoints", obj => obj.name === "Fish"),
+            Dairy: this.map.findObject("Checkpoints", obj => obj.name === "Dairy"),
+            Sweets: this.map.findObject("Checkpoints", obj => obj.name === "Sweets")
         }
 
         //#endregion
@@ -114,8 +148,8 @@ export class CoronaShopSimScene extends Phaser.Scene {
         //#region Player Creation and Collision
 
         this.player = Player(
-            (this.spawnPoints.Cashier as any).x,
-            (this.spawnPoints.Cashier as any).y,
+            (this.spawnPoints.Player as any).x,
+            (this.spawnPoints.Player as any).y,
             this)
 
         this.physics.add.collider(this.player.sprite, this.mapLayers.foreground);
@@ -203,6 +237,18 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
         //#endregion
 
+        this.store = {
+            graphics: this.add.graphics({
+                fillStyle: {
+                    color: 0x000000, alpha: 0
+                }, lineStyle: {
+                    color: 0x000000, alpha: 0, width: 0
+                }
+            }).setDepth(1),
+            rectangle: new Phaser.Geom.Rectangle(192, 96, 384, 672)
+        }
+
+        this.store.graphics.fillRectShape(this.store.rectangle)
     }
 
     update(time: number, delta: number) {
@@ -238,6 +284,12 @@ export class CoronaShopSimScene extends Phaser.Scene {
             }
 
             //#endregion
+
+            //#region Update inspector
+
+            this.inspector?.update()
+
+            //#endregion
         }
     }
 }
@@ -247,17 +299,22 @@ export class CoronaShopSimScene extends Phaser.Scene {
  */
 function loadCharacterAnimations(scene: CoronaShopSimScene) {
 
-    scene.load.spritesheet("player_sprite", "../../assets/Player_Anim1.png", {
+    scene.load.spritesheet("player_sprite", "../../assets/textures/spritesheets/Player_Anim.png", {
         frameWidth: 32,
         frameHeight: 36
     })
 
-    scene.load.spritesheet("npc_sprite", "../../assets/NPC_Anim.png", {
+    scene.load.spritesheet("npc_sprite", "../../assets/textures/spritesheets/NPC_Anim.png", {
         frameWidth: 32,
         frameHeight: 36
     })
 
-    scene.load.spritesheet("npc_sprite_mask", "../../assets/NPC_maske_anim.png", {
+    scene.load.spritesheet("npc_sprite_mask", "../../assets/textures/spritesheets/NPC_maske_anim.png", {
+        frameWidth: 32,
+        frameHeight: 36
+    })
+
+    scene.load.spritesheet("inspector_sprite", "../../assets/textures/spritesheets/inspector_anim.png", {
         frameWidth: 32,
         frameHeight: 36
     })

@@ -1,6 +1,18 @@
 import { randomIntFromInterval, randomEnum } from "../util/helperMethods";
 import { CoronaShopSimScene } from "../typings/scene";
 
+const Article_Resolution = [
+    "Hygiene",
+    "Cereal",
+    "Bread",
+    "Meat",
+    "Drinks",
+    "Produce",
+    "Fish",
+    "Dairy",
+    "Sweets"
+]
+
 export default function NPC(x: number, y: number, scene: CoronaShopSimScene): NPC {
 
     let amountOfArticles = randomIntFromInterval(1, 10)
@@ -15,22 +27,28 @@ export default function NPC(x: number, y: number, scene: CoronaShopSimScene): NP
         understandingScore: randomIntFromInterval(0, 9),
         wearingMask: Boolean(randomIntFromInterval(0, 1)),
         shoppingList,
-        currentWaypoint: { x: 800, y: 465 }, //Door
-        waypoints: [],
-        stopped: false
+        currentWaypoint: scene.checkPoints.Entrance, //Door
+        waypoints: [
+            scene.checkPoints.FarmUpstate,
+            scene.checkPoints.Entrance,
+            scene.checkPoints.Hallway,
+            scene.checkPoints.Register,
+            scene.checkPoints.Hallway
+        ],
+        stopped: false,
+        meta: {}
     }
 
-    state.waypoints.push({ x: 800, y: 30 })
-    state.waypoints.push({ x: 800, y: 465 })
-    state.waypoints.push({ x: 650, y: 470 })
-    state.waypoints.push({ x: 575, y: 320 })
+    shoppingList.forEach(item => {
+        state.waypoints.push(scene.checkPoints[`${Article_Resolution[item]}`])
+        if (['Bread', 'Dairy', 'Sweets', 'Cereal', 'Hygiene'].find(x => x === Article_Resolution[item])) {
+            state.waypoints.push(scene.checkPoints.Hallway2)
+        } else {
+            state.waypoints.push(scene.checkPoints.Hallway)
+        }
+    })
 
-    let amountOfWaypoints = randomIntFromInterval(5, 15)
-    for (let waypoint = 0; waypoint < amountOfWaypoints; waypoint++) {
-        state.waypoints.push({ x: randomIntFromInterval(400, 510), y: randomIntFromInterval(290, 420) })
-    }
-
-    state.waypoints.push({ x: 650, y: 470 })
+    state.waypoints.push(scene.checkPoints.Hallway)
 
     console.log(state.waypoints)
 
@@ -38,24 +56,12 @@ export default function NPC(x: number, y: number, scene: CoronaShopSimScene): NP
         sprite: scene.physics.add.sprite(x, y, "npc_sprite")
             .setInteractive()
             .on("pointerdown", (pointer: Phaser.Input.Pointer) => {
-                // const pointer = scene.input.activePointer.positionToCamera(scene.cameras.main) as Phaser.Math.Vector2;
+                const pointerLocation = scene.input.activePointer.positionToCamera(scene.cameras.main) as Phaser.Math.Vector2;
                 if (pointer.leftButtonDown()) {
-                    const test = [
-                        "Hygenie",
-                        "Cereal",
-                        "Bread",
-                        "Meat",
-                        "Drinks",
-                        "Produce",
-                        "Fish",
-                        "Dairy",
-                        "Sweets"
-                    ]
-
-                    if (true/*scene.player.interactionRadius.circle.contains(pointer.x, pointer.y)*/) {
+                    if (scene.player.interactionRadius.circle.contains(pointerLocation.x, pointerLocation.y)) {
                         console.log(`You clicked me! As you're already here, I'll tell you what I need (${state.shoppingList.length} items):`)
                         state.shoppingList.forEach(item => {
-                            console.log(`${test[item]}`)
+                            console.log(`${Article_Resolution[item]}`)
                         });
 
                         npc.state.stopped = !npc.state.stopped
@@ -99,24 +105,37 @@ function update() {
 
     let body = npc.sprite.body as Phaser.Physics.Arcade.Body
 
+    let waypoint = (npc.state.currentWaypoint as any) as { x: number, y: number, name: string }
+
     // Stop any previous movement from the last frame
     body.setVelocity(0);
 
-    if (npc.state.currentWaypoint && (npc.sprite.x !== npc.state.currentWaypoint.x || npc.sprite.y !== npc.state.currentWaypoint.y)) {
-        if (npc.state.currentWaypoint.x < npc.sprite.x) {
+    if (npc.state.meta.waitUntil) {
+        while (npc.state.meta.waitUntil > npc.scene.gameLoop.totalPlayTime) { return }
+    }
+
+    if (waypoint && (npc.sprite.x !== waypoint.x || npc.sprite.y !== waypoint.y)) {
+        if (waypoint.y <= npc.sprite.y) {
+            body.setVelocityY(-speed)
+        } else {
+            body.setVelocityY(speed)
+        }
+
+        if (waypoint.x <= npc.sprite.x) {
             body.setVelocityX(-speed)
         } else {
             body.setVelocityX(speed)
         }
 
-        if (npc.state.currentWaypoint.y < npc.sprite.y) {
-            body.setVelocityY(-speed)
-        } else {
-            body.setVelocityY(speed)
-        }
     }
 
-    if (npc.state.currentWaypoint && Math.abs(npc.sprite.x - npc.state.currentWaypoint.x) < 16 && Math.abs(npc.sprite.y - npc.state.currentWaypoint.y) < 16) {
+    if (waypoint && Math.abs(npc.sprite.x - waypoint.x) < 8 && Math.abs(npc.sprite.y - waypoint.y) < 8) {
+        if (Article_Resolution.some(x => x === waypoint.name)) {
+            npc.state.meta.waitUntil = npc.scene.gameLoop.totalPlayTime + 5_000
+            npc.scene.shelves[waypoint.name].quantity--
+        } else if (waypoint.name === "Register") {
+            npc.state.meta.waitUntil = npc.scene.gameLoop.totalPlayTime + 5_000
+        }
         npc.state.currentWaypoint = npc.state.waypoints.pop()
     }
 
@@ -151,12 +170,13 @@ export interface npc_state {
     patienceScore: number
     understandingScore: number
     stopped: boolean
-    waypoints?: { x: number, y: number }[]
-    currentWaypoint?: { x: number, y: number }
+    waypoints?: Phaser.GameObjects.GameObject[]
+    currentWaypoint?: Phaser.GameObjects.GameObject
+    meta?: { [key: string]: any }
 }
 
-enum Articles {
-    Hygenie,
+export enum Articles {
+    Hygiene,
     Cereal,
     Bread,
     Meat,
@@ -166,39 +186,3 @@ enum Articles {
     Dairy,
     Sweets
 }
-
-
-
-
-
-    // enemy.state = 'patrol';
-    // enemy.xDest = x;
-    // enemy.yDest = y;
-    // enemy.animations.add('wait', [544, 545], 4);
-    // enemy.direction = 1;
-    // enemy.frame = 544;
-    // enemy.anchor.setTo(.5, 1);
-    // enemy.scale.x = -1;
-
-    // enemy.goToXY = function (x, y) {
-    //     enemy.xDest = x;
-    //     enemy.yDest = y;
-    // }
-
-    // npc.update = function () {
-    //     console.log("Test")
-    // }
-
-    // enemy.stop = function () {
-    //     var self = this;
-    //     self.xDest = self.x;
-    //     self.yDest = self.y;
-    // }
-
-    // enemy.patrol = function () {
-    //     var self = this;
-    //     if (Math.floor(self.x / 10) == Math.floor(self.xDest / 10)) {
-    //         self.direction = self.direction * -1;
-    //         self.goToXY(self.x + self.direction * 100);
-    //     }
-    // }

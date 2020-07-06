@@ -1,6 +1,6 @@
 import { CoronaShopSimScene } from "../typings/scene";
 
-export default function Player(x: number, y: number, scene: Phaser.Scene): Player {
+export default function Player(x: number, y: number, scene: CoronaShopSimScene): Player {
     let player: Player = {
         sprite: scene.physics.add.sprite(x, y, "player_sprite", 0).play("idle_player").setDepth(2),
         interactionRadius: {
@@ -13,6 +13,7 @@ export default function Player(x: number, y: number, scene: Phaser.Scene): Playe
             }).setDepth(1),
             circle: new Phaser.Geom.Circle(x + 16, y + 16, 100)
         },
+        scene,
         update
     }
 
@@ -30,16 +31,16 @@ function update(player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys)
     body.setVelocity(0);
 
     // Horizontal movement
-    if (cursors.left.isDown) {
+    if (cursors.left.isDown && player.sprite.x - 16 > 0) {
         body.setVelocityX(-speed);
-    } else if (cursors.right.isDown) {
+    } else if (cursors.right.isDown && player.sprite.x + 16 < player.scene.map.widthInPixels) {
         body.setVelocityX(speed);
     }
 
     // Vertical movement
-    if (cursors.up.isDown) {
+    if (cursors.up.isDown && player.sprite.y - 16 > 0) {
         body.setVelocityY(-speed);
-    } else if (cursors.down.isDown) {
+    } else if (cursors.down.isDown && player.sprite.y + 16 < player.scene.map.heightInPixels) {
         body.setVelocityY(speed);
     }
 
@@ -55,8 +56,9 @@ function update(player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys)
 export interface Player {
     sprite: Phaser.GameObjects.Sprite
     interactionRadius: {
-        graphics: Phaser.GameObjects.Graphics,
+        graphics: Phaser.GameObjects.Graphics
         circle: Phaser.Geom.Circle
     }
+    scene: CoronaShopSimScene
     update: Function
 }

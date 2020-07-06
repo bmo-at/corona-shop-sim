@@ -1,7 +1,7 @@
-import { Game } from "phaser";
 import NPC from "./npc";
 import { CoronaShopSimScene } from "../typings/scene";
 import { randomIntFromInterval } from "../util/helperMethods";
+import Inspector from "./inspector";
 
 /**
  * Day should last 5 minutes
@@ -30,6 +30,7 @@ export default function gameLoop(scene: CoronaShopSimScene, initialPlayTime?: nu
         dayDurationSeconds: DAY_DURATION_SECONDS,
         paused: false,
         timeSinceLastNPC: 0,
+        timeSinceLastInspection: 0,
         scene,
         update
     }
@@ -44,6 +45,7 @@ export interface GameLoop {
     started: number,
     paused: boolean,
     timeSinceLastNPC: number,
+    timeSinceLastInspection: number,
     update: Function,
     meta?: { [key: string]: any }
 }
@@ -54,8 +56,9 @@ function update(gameLoop: GameLoop, time: number, delta: number) {
     gameLoop.timeOfDay = gameLoop.totalPlayTime % (gameLoop.dayDurationSeconds * 1000)
 
     gameLoop.timeSinceLastNPC += delta
+    gameLoop.timeSinceLastInspection += delta
 
-    if ((gameLoop.timeSinceLastNPC / 1000) > 15) {
+    if ((gameLoop.timeSinceLastNPC / 1000) > 10 && Object.keys(gameLoop.scene.npcs).length < 4) {
         let spawnPoint;
         if (randomIntFromInterval(0, 1) === 0) {
             spawnPoint = gameLoop.scene.spawnPoints.NPC1
@@ -65,6 +68,17 @@ function update(gameLoop: GameLoop, time: number, delta: number) {
 
         gameLoop.scene.npcs[Date.now()] = NPC(spawnPoint.x, spawnPoint.y, gameLoop.scene)
         gameLoop.timeSinceLastNPC = 0
+    }
+
+    if ((gameLoop.timeSinceLastInspection / 1000) > 60 && (gameLoop.scene.inspector?.destroyed || gameLoop.scene.initialInspectorFlag)) {
+        let spawnPoint;
+        if (randomIntFromInterval(0, 1) === 0) {
+            spawnPoint = gameLoop.scene.spawnPoints.NPC1
+        } else (
+            spawnPoint = gameLoop.scene.spawnPoints.NPC2
+        )
+
+        gameLoop.scene.inspector = Inspector(spawnPoint.x, spawnPoint.y, gameLoop.scene)
     }
 
     // console.log(`Day ${gameLoop.day}, ${computeIngameTimeString(gameLoop.timeOfDay)}`)
