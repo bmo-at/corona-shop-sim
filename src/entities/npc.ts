@@ -146,8 +146,8 @@ function update() {
             if (npc.scene.shelves[waypoint.name].quantity > 0) {
                 npc.state.shoppingList.splice(npc.state.shoppingList.indexOf(Article_Resolution.indexOf(waypoint.name)))
                 npc.scene.shelves[waypoint.name].quantity--
-                if (npc.scene.shelves[waypoint.name].cleanliness >= 20) {
-                    npc.scene.shelves[waypoint.name].cleanliness = npc.scene.shelves[waypoint.name].cleanliness - 20
+                if (npc.scene.shelves[waypoint.name].dirtyness <= 80) {
+                    npc.scene.shelves[waypoint.name].dirtyness = npc.scene.shelves[waypoint.name].dirtyness + 20
                 }
                 npc.state.shoppingBasket.push(Article_Resolution.indexOf(waypoint.name))
                 npc.state.currentWaypoint = npc.state.waypoints.pop()
@@ -162,7 +162,7 @@ function update() {
             } else if (npc.state.meta.waitForRefillUntil < npc.scene.gameLoop.totalPlayTime) {
                 npc.state.currentWaypoint = npc.state.waypoints.pop()
             }
-        } else if (waypoint.name === 'Register') {
+        } else if (waypoint.name === 'Register' && npc.state.shoppingBasket.length > 0) {
             npc.state.currentWaypoint = npc.state.waypoints.pop()
             npc.state.waitingInLine = true
             npc.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {

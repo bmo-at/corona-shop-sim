@@ -2,6 +2,7 @@ import NPC from "./npc";
 import { CoronaShopSimScene } from "../typings/scene";
 import { randomIntFromInterval } from "../util/helperMethods";
 import Inspector from "./inspector";
+import { Tilemaps } from "phaser";
 
 /**
  * Day should last 5 minutes
@@ -80,6 +81,15 @@ function update(gameLoop: GameLoop, time: number, delta: number) {
         )
 
         gameLoop.scene.inspector = Inspector(spawnPoint.x, spawnPoint.y, gameLoop.scene)
+    }
+
+    for (const key in gameLoop.scene.shelves) {
+        if (gameLoop.scene.shelves.hasOwnProperty(key)) {
+            const shelf = gameLoop.scene.shelves[key];
+            shelf.dirtySprites.forEach((sprite) => {
+                sprite.setAlpha(shelf.dirtyness / 100)
+            })
+        }
     }
 
     // console.log(`Day ${gameLoop.day}, ${computeIngameTimeString(gameLoop.timeOfDay)}`)

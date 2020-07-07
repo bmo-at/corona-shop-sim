@@ -27,7 +27,7 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
     declare map: Phaser.Tilemaps.Tilemap
     declare tileset: Phaser.Tilemaps.Tileset
-    declare mapLayers: { [key: string]: Phaser.Tilemaps.StaticTilemapLayer | Phaser.Tilemaps.DynamicTilemapLayer }
+    declare mapLayers: { [key: string]: Phaser.Tilemaps.DynamicTilemapLayer }
 
     declare camera: Phaser.Cameras.Scene2D.Camera
 
@@ -73,7 +73,7 @@ export class CoronaShopSimScene extends Phaser.Scene {
             shadows: this.map.createDynamicLayer("Shadows", this.tileset).setDepth(1),
             midground: this.map.createDynamicLayer("Midground", this.tileset).setCollisionByProperty({ collides: true }).setDepth(2),
             foreground: this.map.createDynamicLayer("Foreground", this.tileset).setCollisionByProperty({ collides: true }).setDepth(3),
-            effects: this.map.createBlankDynamicLayer("Effects", this.tileset).setDepth(3)
+            effects: this.map.createBlankDynamicLayer("Effects", this.tileset).setDepth(4)
         }
 
         this.spawnPoints = {
