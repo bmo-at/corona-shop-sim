@@ -25,15 +25,15 @@ export default class TanteEmma extends CoronaShopSimScene {
         super.create()
 
         this.shelves = {
-            Hygiene: Shelf(this.checkPoints.Hygiene, this, 10, [this.mapLayers.foreground.getTileAt(7, 18, true), this.mapLayers.foreground.getTileAt(7, 19, true), this.mapLayers.foreground.getTileAt(7, 20, true)]),
-            Cereal: Shelf(this.checkPoints.Cereal, this, 10, [this.mapLayers.foreground.getTileAt(7, 15, true), this.mapLayers.foreground.getTileAt(7, 16, true), this.mapLayers.foreground.getTileAt(7, 17, true)]),
-            Bread: Shelf(this.checkPoints.Bread, this, 10, [this.mapLayers.foreground.getTileAt(8, 5, true), this.mapLayers.foreground.getTileAt(8, 6, true), this.mapLayers.foreground.getTileAt(9, 5, true), this.mapLayers.foreground.getTileAt(9, 6, true)]),
-            Meat: Shelf(this.checkPoints.Meat, this, 10, [this.mapLayers.foreground.getTileAt(11, 5, true), this.mapLayers.foreground.getTileAt(11, 6, true), this.mapLayers.foreground.getTileAt(12, 5, true), this.mapLayers.foreground.getTileAt(12, 6, true)]),
-            Drinks: Shelf(this.checkPoints.Drinks, this, 10, [this.mapLayers.foreground.getTileAt(12, 18, true), this.mapLayers.foreground.getTileAt(12, 19, true), this.mapLayers.foreground.getTileAt(12, 20, true)]),
-            Produce: Shelf(this.checkPoints.Produce, this, 10, [this.map.getTileAt(15, 16, true)]),
-            Fish: Shelf(this.checkPoints.Fish, this, 10, [this.map.getTileAt(10, 9, true)]),
-            Dairy: Shelf(this.checkPoints.Dairy, this, 10, [this.mapLayers.foreground.getTileAt(7, 8, true), this.mapLayers.foreground.getTileAt(7, 9, true), this.mapLayers.foreground.getTileAt(7, 10, true)]),
-            Sweets: Shelf(this.checkPoints.Sweets, this, 10, [this.mapLayers.foreground.getTileAt(11, 15, true), this.mapLayers.foreground.getTileAt(11, 16, true), this.mapLayers.foreground.getTileAt(11, 17, true)])
+            Hygiene: Shelf(this.checkPoints.Hygiene, this, 0, [this.mapLayers.foreground.getTileAt(7, 18, true), this.mapLayers.foreground.getTileAt(7, 19, true), this.mapLayers.foreground.getTileAt(7, 20, true)]),
+            Cereal: Shelf(this.checkPoints.Cereal, this, 0, [this.mapLayers.foreground.getTileAt(7, 15, true), this.mapLayers.foreground.getTileAt(7, 16, true), this.mapLayers.foreground.getTileAt(7, 17, true)]),
+            Bread: Shelf(this.checkPoints.Bread, this, 0, [this.mapLayers.foreground.getTileAt(8, 5, true), this.mapLayers.foreground.getTileAt(8, 6, true), this.mapLayers.foreground.getTileAt(9, 5, true), this.mapLayers.foreground.getTileAt(9, 6, true)]),
+            Meat: Shelf(this.checkPoints.Meat, this, 0, [this.mapLayers.foreground.getTileAt(11, 5, true), this.mapLayers.foreground.getTileAt(11, 6, true), this.mapLayers.foreground.getTileAt(12, 5, true), this.mapLayers.foreground.getTileAt(12, 6, true)]),
+            Drinks: Shelf(this.checkPoints.Drinks, this, 0, [this.mapLayers.foreground.getTileAt(12, 18, true), this.mapLayers.foreground.getTileAt(12, 19, true), this.mapLayers.foreground.getTileAt(12, 20, true)]),
+            Produce: Shelf(this.checkPoints.Produce, this, 0, [this.map.getTileAt(15, 16, true)]),
+            Fish: Shelf(this.checkPoints.Fish, this, 0, [this.map.getTileAt(10, 9, true)]),
+            Dairy: Shelf(this.checkPoints.Dairy, this, 0, [this.mapLayers.foreground.getTileAt(7, 8, true), this.mapLayers.foreground.getTileAt(7, 9, true), this.mapLayers.foreground.getTileAt(7, 10, true)]),
+            Sweets: Shelf(this.checkPoints.Sweets, this, 0, [this.mapLayers.foreground.getTileAt(11, 15, true), this.mapLayers.foreground.getTileAt(11, 16, true), this.mapLayers.foreground.getTileAt(11, 17, true)])
         }
 
         //WIP

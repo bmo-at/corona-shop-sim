@@ -31,7 +31,7 @@ export default function Shelf(checkPoint: Phaser.GameObjects.GameObject, scene: 
                 const pointerLocation = scene.input.activePointer.positionToCamera(scene.cameras.main) as Phaser.Math.Vector2;
                 if (pointer.leftButtonDown()) {
                     if (scene.player.interactionRadius.circle.contains(pointerLocation.x, pointerLocation.y)) {
-                        console.log(`Shelf refilled with ${initialQuantity} of ${Article_Resolution[shelf.product]}`)
+                        console.log(`Shelf refilled with ${10} of ${Article_Resolution[shelf.product]}`)
                         shelf.quantity = 10
                     } else {
                         console.log(`You clicked the shelf containing ${Article_Resolution[shelf.product]}, but it is out of your range!`)
@@ -40,6 +40,9 @@ export default function Shelf(checkPoint: Phaser.GameObjects.GameObject, scene: 
                 if (pointer.rightButtonDown()) {
                     console.log(`There's ${shelf.quantity} of ${Article_Resolution[shelf.product]} remaining`)
                 }
+            })
+            .on('pointerover', () => { 
+                console.log(`You clicked the shelf containing ${Article_Resolution[shelf.product]}, but it is out of your range!`)
             })
 
     });

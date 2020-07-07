@@ -3,6 +3,7 @@ import { CoronaShopSimScene } from "../typings/scene";
 export default function Inspector(x: number, y: number, scene: CoronaShopSimScene) {
     scene.initialInspectorFlag = false
     let state: inspector_state = {
+        strikes: 0,
         stopped: false,
         meta: {},
         waypoints: [
@@ -56,8 +57,12 @@ function update() {
             }
         }
 
-        if (npcs_in_store.length > 2) {
-            console.log("GAME OVER")
+        if (npcs_in_store.length > 2 && inspector.scene.store.rectangle.contains(inspector.sprite.x, inspector.sprite.y)) {
+            inspector.state.strikes++
+        }
+
+        if (inspector.state.strikes > 2) {
+            inspector.scene.gameover()
         }
 
         const speed = 40;
@@ -122,6 +127,7 @@ export interface Inspector {
 
 interface inspector_state {
     stopped: boolean
+    strikes: number
     waypoints?: Phaser.GameObjects.GameObject[]
     currentWaypoint?: Phaser.GameObjects.GameObject
     meta?: { [key: string]: any }

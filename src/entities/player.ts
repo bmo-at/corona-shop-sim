@@ -22,7 +22,7 @@ export default function Player(x: number, y: number, scene: CoronaShopSimScene):
 
 function update(player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
 
-    const speed = 100;
+    const speed = 125;
 
     let body = player.sprite.body as Phaser.Physics.Arcade.Body
 

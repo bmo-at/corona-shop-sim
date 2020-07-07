@@ -1,5 +1,5 @@
 import { randomIntFromInterval, randomEnum } from "../util/helperMethods";
-import { CoronaShopSimScene } from "../typings/scene";
+import { CoronaShopSimScene, tools } from "../typings/scene";
 
 const Article_Resolution = [
     "Hygiene",
@@ -23,10 +23,11 @@ export default function NPC(x: number, y: number, scene: CoronaShopSimScene): NP
     }
 
     let state: npc_state = {
-        patienceScore: randomIntFromInterval(0, 9),
-        understandingScore: randomIntFromInterval(0, 9),
+        patienceScore: randomIntFromInterval(1, 10) / 10,
+        understandingScore: randomIntFromInterval(1, 10) / 10,
         wearingMask: Boolean(randomIntFromInterval(0, 1)),
         shoppingList,
+        shoppingBasket: [],
         currentWaypoint: scene.checkPoints.Entrance, //Door
         waypoints: [
             scene.checkPoints.FarmUpstate,
@@ -35,6 +36,8 @@ export default function NPC(x: number, y: number, scene: CoronaShopSimScene): NP
             scene.checkPoints.Register,
             scene.checkPoints.Hallway
         ],
+        waitingInLine: false,
+        hasPayed: false,
         stopped: false,
         meta: {}
     }
@@ -75,6 +78,10 @@ export default function NPC(x: number, y: number, scene: CoronaShopSimScene): NP
                     npc.state.wearingMask = true
                     npc.sprite.play("idle_npc_mask")
                 }
+            }).on('pointerover', () => {
+
+            }).on('pointerout', () => {
+
             })
             .setDepth(2),
         state,
@@ -101,18 +108,23 @@ function update() {
 
     const npc = this as NPC
 
-    const speed = 40;
-
     let body = npc.sprite.body as Phaser.Physics.Arcade.Body
+
+    if (
+        npc.state.stopped ||
+        (npc.state.meta.waitUntil && npc.state.meta.waitUntil > npc.scene.gameLoop.totalPlayTime) ||
+        (npc.state.meta.waitForCashierUntil && npc.state.meta.waitForCashierUntil > npc.scene.gameLoop.totalPlayTime) ||
+        (npc.state.meta.waitForRefillUntil && npc.state.meta.waitForRefillUntil > npc.scene.gameLoop.totalPlayTime)
+    ) {
+        body.setVelocity(0); return
+    }
+
+    const speed = 40;
 
     let waypoint = (npc.state.currentWaypoint as any) as { x: number, y: number, name: string }
 
     // Stop any previous movement from the last frame
     body.setVelocity(0);
-
-    if (npc.state.meta.waitUntil) {
-        while (npc.state.meta.waitUntil > npc.scene.gameLoop.totalPlayTime) { return }
-    }
 
     if (waypoint && (npc.sprite.x !== waypoint.x || npc.sprite.y !== waypoint.y)) {
         if (waypoint.y <= npc.sprite.y) {
@@ -131,21 +143,68 @@ function update() {
 
     if (waypoint && Math.abs(npc.sprite.x - waypoint.x) < 8 && Math.abs(npc.sprite.y - waypoint.y) < 8) {
         if (Article_Resolution.some(x => x === waypoint.name)) {
-            npc.state.meta.waitUntil = npc.scene.gameLoop.totalPlayTime + 5_000
-            npc.scene.shelves[waypoint.name].quantity--
-        } else if (waypoint.name === "Register") {
-            npc.state.meta.waitUntil = npc.scene.gameLoop.totalPlayTime + 5_000
+            if (npc.scene.shelves[waypoint.name].quantity > 0) {
+                npc.state.shoppingList.splice(npc.state.shoppingList.indexOf(Article_Resolution.indexOf(waypoint.name)))
+                npc.scene.shelves[waypoint.name].quantity--
+                if (npc.scene.shelves[waypoint.name].cleanliness >= 20) {
+                    npc.scene.shelves[waypoint.name].cleanliness = npc.scene.shelves[waypoint.name].cleanliness - 20
+                }
+                npc.state.shoppingBasket.push(Article_Resolution.indexOf(waypoint.name))
+                npc.state.currentWaypoint = npc.state.waypoints.pop()
+                if (npc.state.meta.waitForRefillUntil) {
+                    delete npc.state.meta.waitForRefillUntil
+                } else {
+                    npc.state.meta.waitUntil = npc.scene.gameLoop.totalPlayTime + 2_500
+                }
+            } else if (!npc.state.meta.waitForRefillUntil) {
+                // TODO: Show needed article 
+                npc.state.meta.waitForRefillUntil = npc.scene.gameLoop.totalPlayTime + 7_500
+            } else if (npc.state.meta.waitForRefillUntil < npc.scene.gameLoop.totalPlayTime) {
+                npc.state.currentWaypoint = npc.state.waypoints.pop()
+            }
+        } else if (waypoint.name === 'Register') {
+            npc.state.currentWaypoint = npc.state.waypoints.pop()
+            npc.state.waitingInLine = true
+            npc.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+                const pointerLocation = npc.scene.input.activePointer.positionToCamera(npc.scene.cameras.main) as Phaser.Math.Vector2;
+                if (npc.scene.player.interactionRadius.circle.contains(pointerLocation.x, pointerLocation.y)
+                    && npc.scene.currentTool === tools.CASH) {
+                    delete npc.state.meta.waitForCashierUntil
+                    npc.state.shoppingBasket.forEach((boughtArticle) => {
+                        console.log(`${Article_Resolution[boughtArticle]} has been sold`)
+                        npc.scene.gameLoop.money += 10
+                        if (npc.scene.gameLoop.customerHappiness < 100) {
+                            npc.scene.gameLoop.customerHappiness++
+                        }
+                    })
+                    npc.state.hasPayed = true
+                }
+            })
+            npc.state.meta.waitForCashierUntil = npc.scene.gameLoop.totalPlayTime + 25_000
+        } else {
+            npc.state.currentWaypoint = npc.state.waypoints.pop()
         }
-        npc.state.currentWaypoint = npc.state.waypoints.pop()
     }
 
     if (npc.state.currentWaypoint === undefined) {
+        npc.state.shoppingList.forEach((unboughtArticle) => {
+            console.log(`${Article_Resolution[unboughtArticle]} couldn't be accquired`)
+            npc.scene.gameLoop.customerHappiness--
+        })
+        if (!npc.state.hasPayed) {
+            npc.state.shoppingBasket.forEach((unboughtArticle) => {
+                console.log(`${Article_Resolution[unboughtArticle]} was returned`)
+                npc.scene.gameLoop.money--
+                if (npc.scene.gameLoop.customerHappiness < 100) {
+                    npc.scene.gameLoop.customerHappiness--
+                }
+                npc.scene.shelves[Article_Resolution[unboughtArticle]].quantity++
+            })
+        }
         npc.destroy()
     }
 
     body.velocity.normalize().scale(speed);
-
-    if (npc.state.stopped) { body.setVelocity(0) }
 }
 
 function destroy() {
@@ -167,8 +226,11 @@ export interface NPC {
 export interface npc_state {
     wearingMask: boolean
     shoppingList: Articles[]
+    shoppingBasket: Articles[]
     patienceScore: number
     understandingScore: number
+    hasPayed: boolean
+    waitingInLine: boolean
     stopped: boolean
     waypoints?: Phaser.GameObjects.GameObject[]
     currentWaypoint?: Phaser.GameObjects.GameObject

@@ -7,6 +7,7 @@ import { GameLoop as GameLoopInterface } from "../entities/gameLoop"
 import Shelf from "../entities/shelf"
 import { Shelf as ShelfInterface } from "../entities/shelf"
 import GameLoop from "../entities/gameLoop"
+import menuScreen from '../scenes/menuScreen';
 
 export class CoronaShopSimScene extends Phaser.Scene {
 
@@ -41,40 +42,20 @@ export class CoronaShopSimScene extends Phaser.Scene {
         rectangle: Phaser.Geom.Rectangle
     }
 
+    currentTool: tools = tools.STOP
+
     //#endregion
 
     pause() {
-        this.gameLoop.paused = true
-        this.player.sprite.anims.pause()
-        this.inspector.sprite?.anims.pause()
-        for (const npc_id in this.npcs) {
-            if (this.npcs.hasOwnProperty(npc_id)) {
-                const npc = this.npcs[npc_id]
-                npc.sprite.anims.pause()
-            }
-        }
-
-        //Set Velocities to 0
-        (this.player.sprite.body as Phaser.Physics.Arcade.Body).setVelocity(0);
-        (this.inspector.sprite?.body as Phaser.Physics.Arcade.Body).setVelocity(0)
-        for (const npc_id in this.npcs) {
-            if (this.npcs.hasOwnProperty(npc_id)) {
-                const npc = this.npcs[npc_id];
-                (npc.sprite.body as Phaser.Physics.Arcade.Body).setVelocity(0)
-            }
-        }
+        this.scene.pause()
+        this.scene.launch('menu_screen')
+        this.scene.bringToTop('menu_screen')
     }
 
-    unpause() {
-        this.gameLoop.paused = false
-        this.player.sprite.anims.resume()
-        this.inspector.sprite?.anims.resume()
-        for (const npc_id in this.npcs) {
-            if (this.npcs.hasOwnProperty(npc_id)) {
-                const npc = this.npcs[npc_id];
-                npc.sprite.anims.resume()
-            }
-        }
+    gameover() {
+        this.scene.pause()
+        this.scene.launch('gameover_screen')
+        this.scene.bringToTop('gameover_screen')
     }
 
     preload() {
@@ -167,7 +148,16 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
         //#endregion
 
+        //#region Menu Screen Initialization
+
+        this.scene.remove('menu_screen')
+        this.scene.add('menu_screen', new menuScreen(this.scene.key), false)
+
+        //#endregion
+
         //#region Controls
+
+        this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/stop_small.png'), pointer")
 
         this.cursors = this.input.keyboard.createCursorKeys()
         this.input.mouse.disableContextMenu()
@@ -175,11 +165,13 @@ export class CoronaShopSimScene extends Phaser.Scene {
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.P)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                if (this.gameLoop.paused) {
-                    this.unpause();
-                } else {
-                    this.pause();
-                }
+                this.pause()
+            })
+
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.pause()
             })
 
         this.input.keyboard
@@ -197,15 +189,40 @@ export class CoronaShopSimScene extends Phaser.Scene {
             })
 
         this.input.keyboard
-            .addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
+            .addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                if (this.gameLoop.paused) {
-                    this.unpause();
-                    //HIDE MENU
-                } else {
-                    this.pause();
-                    //SHOW MENU
-                }
+                this.currentTool = tools.STOP
+                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/stop_small.png'), pointer")
+            })
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.currentTool = tools.MASK
+                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/mask_small.png'), pointer")
+            })
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.THREE)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.currentTool = tools.CASH
+                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/cash_icon_small.png'), pointer")
+            })
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.currentTool = tools.FORCEOUT
+                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/forceout_small.png'), pointer")
+            })
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.currentTool = tools.DISINFECT
+                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/disinfectant_bottle_small.png'), pointer")
+            })
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.SIX)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.currentTool = tools.REFILL
+                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/crate_small.png'), pointer")
             })
 
 
@@ -252,46 +269,40 @@ export class CoronaShopSimScene extends Phaser.Scene {
     }
 
     update(time: number, delta: number) {
+        //#region Game Loop
 
+        this.gameLoop.update(this.gameLoop, time, delta)
 
-        if (this.gameLoop.paused) {
-            console.log("Game is paused")
-        } else {
+        //#endregion
 
-            //#region Game Loop
+        //#region Update player
 
-            this.gameLoop.update(this.gameLoop, time, delta)
+        this.player.update(this.player, this.cursors)
 
-            //#endregion
+        //#endregion
 
-            //#region Update player
+        //#region  Update npcs
 
-            this.player.update(this.player, this.cursors)
-
-            //#endregion
-
-            //#region  Update npcs
-
-            for (let npc_id in this.npcs) {
-                if (this.npcs.hasOwnProperty(npc_id)) {
-                    let npc = this.npcs[npc_id]
-                    if (npc.destroyed) {
-                        delete this.npcs[npc_id]
-                    } else {
-                        npc.update()
-                    }
+        for (let npc_id in this.npcs) {
+            if (this.npcs.hasOwnProperty(npc_id)) {
+                let npc = this.npcs[npc_id]
+                if (npc.destroyed) {
+                    delete this.npcs[npc_id]
+                } else {
+                    npc.update()
                 }
             }
-
-            //#endregion
-
-            //#region Update inspector
-
-            this.inspector?.update()
-
-            //#endregion
         }
+
+        //#endregion
+
+        //#region Update inspector
+
+        this.inspector?.update()
+
+        //#endregion
     }
+
 }
 
 /**
@@ -318,4 +329,13 @@ function loadCharacterAnimations(scene: CoronaShopSimScene) {
         frameWidth: 32,
         frameHeight: 36
     })
+}
+
+export enum tools {
+    STOP,
+    MASK,
+    DISINFECT,
+    FORCEOUT,
+    REFILL,
+    CASH
 }

@@ -20,19 +20,19 @@ export const DAY_DURATION_SECONDS = 300
  */
 export default function gameLoop(scene: CoronaShopSimScene, initialPlayTime?: number): GameLoop {
 
-    const instance_DAY_DURATION_SECONDS = DAY_DURATION_SECONDS
-
     return {
         totalPlayTime: initialPlayTime || 0,
         day: Math.floor(initialPlayTime / (DAY_DURATION_SECONDS * 1000)) || 0,
         timeOfDay: (initialPlayTime % (DAY_DURATION_SECONDS * 1000)) || 0,
         started: Date.now(),
         dayDurationSeconds: DAY_DURATION_SECONDS,
-        paused: false,
         timeSinceLastNPC: 0,
         timeSinceLastInspection: 0,
+        money: 0,
+        customerHappiness: 100,
         scene,
-        update
+        update,
+        meta: {}
     }
 }
 
@@ -43,9 +43,10 @@ export interface GameLoop {
     timeOfDay: number,
     dayDurationSeconds: number,
     started: number,
-    paused: boolean,
     timeSinceLastNPC: number,
     timeSinceLastInspection: number,
+    money: number,
+    customerHappiness: number,
     update: Function,
     meta?: { [key: string]: any }
 }
@@ -58,7 +59,7 @@ function update(gameLoop: GameLoop, time: number, delta: number) {
     gameLoop.timeSinceLastNPC += delta
     gameLoop.timeSinceLastInspection += delta
 
-    if ((gameLoop.timeSinceLastNPC / 1000) > 10 && Object.keys(gameLoop.scene.npcs).length < 4) {
+    if ((gameLoop.timeSinceLastNPC / 1000) > 10 && Object.keys(gameLoop.scene.npcs).length < 5) {
         let spawnPoint;
         if (randomIntFromInterval(0, 1) === 0) {
             spawnPoint = gameLoop.scene.spawnPoints.NPC1
