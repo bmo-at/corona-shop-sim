@@ -68,7 +68,7 @@ function update(gameLoop: GameLoop, time: number, delta: number) {
             spawnPoint = gameLoop.scene.spawnPoints.NPC2
         )
 
-        gameLoop.scene.npcs[Date.now()] = NPC(spawnPoint.x, spawnPoint.y, gameLoop.scene)
+        gameLoop.scene.npcs[Date.now()] = new NPC(spawnPoint.x, spawnPoint.y, gameLoop.scene)
         gameLoop.timeSinceLastNPC = 0
     }
 
@@ -81,6 +81,8 @@ function update(gameLoop: GameLoop, time: number, delta: number) {
         )
 
         gameLoop.scene.inspector = Inspector(spawnPoint.x, spawnPoint.y, gameLoop.scene)
+        gameLoop.scene.inspector.sprite.play('idle_inspector')
+
     }
 
     for (const key in gameLoop.scene.shelves) {

@@ -1,4 +1,5 @@
 import { Scene, Types } from "phaser";
+import howToPlay from '../scenes/howTopPlay';
 
 export default class titleScreen extends Scene {
     constructor(config: Types.Scenes.SettingsConfig) {
@@ -11,29 +12,39 @@ export default class titleScreen extends Scene {
 
     preload() {
         this.load.image('background', '../../assets/tante_emma_map.png')
-        this.load.spritesheet("player_sprite", "../../assets/textures/spritesheets/Player_Anim.png", {
-            frameWidth: 32,
-            frameHeight: 36
+        this.load.image('corona', '../../assets/icons/corona.png')
+        this.load.spritesheet("player_sprite_homescreen", "../../assets/textures/spritesheets/Player_Anim_homescreen.png", {
+            frameWidth: 192,
+            frameHeight: 216
         })
     }
 
     create() {
 
         this.anims.create({
-            key: "idle_player",
-            frames: this.anims.generateFrameNumbers("player_sprite", { start: 0, end: 3 }),
-            frameRate: 10,
+            key: "idle_player_homescreen",
+            frames: this.anims.generateFrameNumbers("player_sprite_homescreen", { start: 0, end: 3 }),
+            frameRate: 8,
             repeat: -1
         });
 
+        this.scene.remove('how_to_play')
+        this.scene.add('how_to_play', new howToPlay(this.scene.key), false)
 
         let shopkeep = this.add.sprite(
             this.cameras.main.width * .78,
             this.cameras.main.height * .75,
-            'player_sprite')
-            .setScale(6)
-            .play('idle_player')
+            'player_sprite_homescreen')
+            // .setScale(6)
+            .play('idle_player_homescreen')
             .setAlpha(0.8)
+            .setDepth(1)
+
+        let corona = this.add.sprite(
+            this.cameras.main.width * 0.1,
+            this.cameras.main.height * 0.35,
+            'corona')
+            .setAlpha(0.9)
             .setDepth(1)
 
         let background = this.add.tileSprite(
@@ -72,23 +83,26 @@ export default class titleScreen extends Scene {
                 startgame.setShadowColor('#FFFFFF')
             })
 
-        let options = this.add.text(
-            this.cameras.main.width * .425,
+        let howto = this.add.text(
+            this.cameras.main.width * .4,
             this.cameras.main.height * .6,
-            'Options')
+            'How to play')
             .setFontFamily('Comic Sans MS')
             .setColor('black')
             .setFontSize(36)
             .setShadow(2, 2, 'white', 3, true, true)
             .setInteractive()
             .on('pointerdown', () => {
-                window.alert("Not yet implemented")
+                this.scene.pause()
+                this.scene.launch('how_to_play')
+                this.scene.bringToTop('how_to_play')
+                this.input.setDefaultCursor('')
             })
             .on('pointerover', () => {
-                options.setShadowColor('#A9A9A9')
+                howto.setShadowColor('#A9A9A9')
             })
             .on('pointerout', () => {
-                options.setShadowColor('#FFFFFF')
+                howto.setShadowColor('#FFFFFF')
             })
     }
 

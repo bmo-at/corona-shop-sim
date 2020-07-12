@@ -1,13 +1,16 @@
+import 'phaser'
 import { Player as PlayerInterface } from "../entities/player"
 import Player from "../entities/player"
 import { Inspector as InspectorInterface } from "../entities/inspector"
 import Inspector from "../entities/inspector"
-import { NPC } from "../entities/npc"
+import NPC from "../entities/npc"
 import { GameLoop as GameLoopInterface } from "../entities/gameLoop"
 import Shelf from "../entities/shelf"
 import { Shelf as ShelfInterface } from "../entities/shelf"
 import GameLoop from "../entities/gameLoop"
 import menuScreen from '../scenes/menuScreen';
+import howToPlay from '../scenes/howTopPlay';
+import { Tools } from "./tools"
 
 export class CoronaShopSimScene extends Phaser.Scene {
 
@@ -42,7 +45,9 @@ export class CoronaShopSimScene extends Phaser.Scene {
         rectangle: Phaser.Geom.Rectangle
     }
 
-    currentTool: tools = tools.STOP
+    declare wasd: Phaser.Types.Input.Keyboard.CursorKeys
+
+    currentTool: Tools = Tools.STOP
 
     //#endregion
 
@@ -50,12 +55,21 @@ export class CoronaShopSimScene extends Phaser.Scene {
         this.scene.pause()
         this.scene.launch('menu_screen')
         this.scene.bringToTop('menu_screen')
+        this.input.setDefaultCursor('')
+    }
+
+    help() {
+        this.scene.pause()
+        this.scene.launch('how_to_play')
+        this.scene.bringToTop('how_to_play')
+        this.input.setDefaultCursor('')
     }
 
     gameover() {
         this.scene.pause()
         this.scene.launch('gameover_screen')
         this.scene.bringToTop('gameover_screen')
+        this.input.setDefaultCursor('')
     }
 
     preload() {
@@ -124,6 +138,13 @@ export class CoronaShopSimScene extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: "idle_inspector",
+            frames: this.anims.generateFrameNumbers("inspector_sprite", { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
         //#endregion
 
         //#region Player Creation and Collision
@@ -148,10 +169,13 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
         //#endregion
 
-        //#region Menu Screen Initialization
+        //#region Menu/Help Screen Initialization
 
         this.scene.remove('menu_screen')
         this.scene.add('menu_screen', new menuScreen(this.scene.key), false)
+
+        this.scene.remove('how_to_play')
+        this.scene.add('how_to_play', new howToPlay(this.scene.key), false)
 
         //#endregion
 
@@ -159,7 +183,20 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
         this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/stop_small.png'), pointer")
 
-        this.cursors = this.input.keyboard.createCursorKeys()
+        this.wasd = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        })
+
+        this.cursors = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.UP,
+            down: Phaser.Input.Keyboard.KeyCodes.DOWN,
+            left: Phaser.Input.Keyboard.KeyCodes.LEFT,
+            right: Phaser.Input.Keyboard.KeyCodes.RIGHT
+        })
+
         this.input.mouse.disableContextMenu()
 
         this.input.keyboard
@@ -172,6 +209,12 @@ export class CoronaShopSimScene extends Phaser.Scene {
             .addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
                 this.pause()
+            })
+
+        this.input.keyboard
+            .addKey(Phaser.Input.Keyboard.KeyCodes.H)
+            .on(Phaser.Input.Keyboard.Events.DOWN, () => {
+                this.help()
             })
 
         this.input.keyboard
@@ -191,41 +234,41 @@ export class CoronaShopSimScene extends Phaser.Scene {
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                this.currentTool = tools.STOP
-                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/stop_small.png'), pointer")
+                changeToolTo(Tools.STOP, this)
             })
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                this.currentTool = tools.MASK
-                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/mask_small.png'), pointer")
+                changeToolTo(Tools.MASK, this)
             })
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.THREE)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                this.currentTool = tools.CASH
-                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/cash_icon_small.png'), pointer")
+                changeToolTo(Tools.CASH, this)
             })
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                this.currentTool = tools.FORCEOUT
-                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/forceout_small.png'), pointer")
+                changeToolTo(Tools.FORCEOUT, this)
             })
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                this.currentTool = tools.DISINFECT
-                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/disinfectant_bottle_small.png'), pointer")
+                changeToolTo(Tools.DISINFECT, this)
             })
         this.input.keyboard
             .addKey(Phaser.Input.Keyboard.KeyCodes.SIX)
             .on(Phaser.Input.Keyboard.Events.DOWN, () => {
-                this.currentTool = tools.REFILL
-                this.input.setDefaultCursor("url('../../assets/allesnurgeklaut/crate_small.png'), pointer")
+                changeToolTo(Tools.REFILL, this)
             })
 
-
+        this.input.on(Phaser.Input.Events.POINTER_WHEEL, (pointer: Phaser.Input.Pointer) => {
+            if (pointer.deltaY > 0) {
+                if (this.currentTool < Tools.REFILL) { changeToolTo(this.currentTool + 1, this) }
+            } else {
+                if (this.currentTool > Tools.STOP) { changeToolTo(this.currentTool - 1, this) }
+            }
+        })
 
         //WIP TIME SCALING
         // this.input.keyboard
@@ -277,7 +320,7 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
         //#region Update player
 
-        this.player.update(this.player, this.cursors)
+        this.player.update(this.player, this.cursors, this.wasd)
 
         //#endregion
 
@@ -331,11 +374,7 @@ function loadCharacterAnimations(scene: CoronaShopSimScene) {
     })
 }
 
-export enum tools {
-    STOP,
-    MASK,
-    DISINFECT,
-    FORCEOUT,
-    REFILL,
-    CASH
+function changeToolTo(tool: Tools, scene: CoronaShopSimScene) {
+    scene.currentTool = tool
+    scene.input.setDefaultCursor(`url('../../assets/icons/tools/${tool}.png'), pointer`)
 }

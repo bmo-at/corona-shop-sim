@@ -20,7 +20,7 @@ export default function Player(x: number, y: number, scene: CoronaShopSimScene):
     return player
 }
 
-function update(player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+function update(player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys, wasd: Phaser.Types.Input.Keyboard.CursorKeys) {
 
     const speed = 125;
 
@@ -31,16 +31,16 @@ function update(player: Player, cursors: Phaser.Types.Input.Keyboard.CursorKeys)
     body.setVelocity(0);
 
     // Horizontal movement
-    if (cursors.left.isDown && player.sprite.x - 16 > 0) {
+    if ((cursors.left.isDown || wasd.left.isDown) && player.sprite.x - 16 > 0) {
         body.setVelocityX(-speed);
-    } else if (cursors.right.isDown && player.sprite.x + 16 < player.scene.map.widthInPixels) {
+    } else if ((cursors.right.isDown || wasd.right.isDown) && player.sprite.x + 16 < player.scene.map.widthInPixels) {
         body.setVelocityX(speed);
     }
 
     // Vertical movement
-    if (cursors.up.isDown && player.sprite.y - 16 > 0) {
+    if ((cursors.up.isDown || wasd.up.isDown) && player.sprite.y - 16 > 0) {
         body.setVelocityY(-speed);
-    } else if (cursors.down.isDown && player.sprite.y + 16 < player.scene.map.heightInPixels) {
+    } else if ((cursors.down.isDown || wasd.down.isDown) && player.sprite.y + 16 < player.scene.map.heightInPixels) {
         body.setVelocityY(speed);
     }
 

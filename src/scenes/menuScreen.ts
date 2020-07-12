@@ -1,4 +1,5 @@
 import { Scene, Types } from "phaser";
+import { CoronaShopSimScene } from "../typings/scene";
 
 export default class menuScreen extends Scene {
     constructor(previousSceneKey: string, config?: Types.Scenes.SettingsConfig) {
@@ -30,9 +31,9 @@ export default class menuScreen extends Scene {
             })
 
         let resumegame = this.add.text(
-            this.cameras.main.width * .4,
+            this.cameras.main.width * .35,
             this.cameras.main.height * .5,
-            'Resume game')
+            'Resume game (ESC/P)')
             .setFontFamily('Comic Sans MS')
             .setColor('black')
             .setFontSize(36)
@@ -53,12 +54,15 @@ export default class menuScreen extends Scene {
         this.scene.bringToTop(this.previousSceneKey);
         this.scene.resume(this.previousSceneKey);
         this.scene.wake(this.previousSceneKey);
+        this.scene
+            .get(this.previousSceneKey)
+            .input
+            .setDefaultCursor(`url('../../assets/icons/tools/${
+                (this.scene.get(this.previousSceneKey) as CoronaShopSimScene).currentTool
+                }.png'), pointer`)
         this.scene.stop();
     }
 
     update() {
-
     }
-
-
 }

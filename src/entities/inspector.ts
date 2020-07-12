@@ -2,7 +2,7 @@ import { CoronaShopSimScene } from "../typings/scene";
 
 export default function Inspector(x: number, y: number, scene: CoronaShopSimScene) {
     scene.initialInspectorFlag = false
-    let state: inspector_state = {
+    let inspector_state: inspector_state = {
         strikes: 0,
         stopped: false,
         meta: {},
@@ -31,12 +31,13 @@ export default function Inspector(x: number, y: number, scene: CoronaShopSimScen
                 const pointerLocation = scene.input.activePointer.positionToCamera(scene.cameras.main) as Phaser.Math.Vector2;
             })
             .setDepth(2),
-        state,
+        inspector_state,
         destroy,
         update,
         destroyed: false,
         scene
     }
+
     return inspector
 }
 
@@ -57,11 +58,12 @@ function update() {
             }
         }
 
-        if (npcs_in_store.length > 2 && inspector.scene.store.rectangle.contains(inspector.sprite.x, inspector.sprite.y)) {
-            inspector.state.strikes++
+        if (npcs_in_store.length > 2 && inspector.scene.store.rectangle.contains(inspector.sprite.x, inspector.sprite.y) && inspector.scene.gameLoop.totalPlayTime > inspector.inspector_state.meta.strikeCooldown) {
+            inspector.inspector_state.strikes++
+            inspector.inspector_state.meta.strikeCooldown = inspector.scene.gameLoop.totalPlayTime + 20_000
         }
 
-        if (inspector.state.strikes > 2) {
+        if (inspector.inspector_state.strikes > 2) {
             inspector.scene.gameover()
         }
 
@@ -69,13 +71,13 @@ function update() {
 
         let body = inspector.sprite.body as Phaser.Physics.Arcade.Body
 
-        let waypoint = (inspector.state.currentWaypoint as any) as { x: number, y: number, name: string }
+        let waypoint = (inspector.inspector_state.currentWaypoint as any) as { x: number, y: number, name: string }
 
         // Stop any previous movement from the last frame
         body.setVelocity(0);
 
-        if (inspector.state.meta.waitUntil) {
-            while (inspector.state.meta.waitUntil > inspector.scene.gameLoop.totalPlayTime) { return }
+        if (inspector.inspector_state.meta.waitUntil) {
+            while (inspector.inspector_state.meta.waitUntil > inspector.scene.gameLoop.totalPlayTime) { return }
         }
 
         if (waypoint && (inspector.sprite.x !== waypoint.x || inspector.sprite.y !== waypoint.y)) {
@@ -94,17 +96,17 @@ function update() {
         }
 
         if (waypoint && Math.abs(inspector.sprite.x - waypoint.x) < 8 && Math.abs(inspector.sprite.y - waypoint.y) < 8) {
-            inspector.state.meta.waitUntil = inspector.scene.gameLoop.totalPlayTime + 2_000
-            inspector.state.currentWaypoint = inspector.state.waypoints.pop()
+            inspector.inspector_state.meta.waitUntil = inspector.scene.gameLoop.totalPlayTime + 2_000
+            inspector.inspector_state.currentWaypoint = inspector.inspector_state.waypoints.pop()
         }
 
-        if (inspector.state.currentWaypoint === undefined) {
+        if (inspector.inspector_state.currentWaypoint === undefined) {
             inspector.destroy()
         }
 
         body.velocity.normalize().scale(speed);
 
-        if (inspector.state.stopped) { body.setVelocity(0) }
+        if (inspector.inspector_state.stopped) { body.setVelocity(0) }
     }
 }
 
@@ -117,18 +119,17 @@ function destroy() {
 
 export interface Inspector {
     scene: CoronaShopSimScene
-    state: inspector_state
+    inspector_state: inspector_state
     sprite: Phaser.GameObjects.Sprite
     destroyed: boolean
-    update?: Function
-    move?: Function
-    destroy?: Function
+    update: Function
+    destroy: Function
 }
 
 interface inspector_state {
     stopped: boolean
     strikes: number
-    waypoints?: Phaser.GameObjects.GameObject[]
-    currentWaypoint?: Phaser.GameObjects.GameObject
-    meta?: { [key: string]: any }
+    waypoints: Phaser.GameObjects.GameObject[]
+    currentWaypoint: Phaser.GameObjects.GameObject
+    meta: { [key: string]: any }
 }
