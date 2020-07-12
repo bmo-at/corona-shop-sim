@@ -20,6 +20,16 @@ export const DAY_DURATION_SECONDS = 300
  */
 export default function gameLoop(scene: CoronaShopSimScene, initialPlayTime?: number): GameLoop {
 
+    let camera = scene.cameras.main
+
+    let money = scene.add.image(camera.width * 0.78, camera.height * 0.1, 'money').setDepth(6).setScale(0.1)
+    let satisfaction = scene.add.image(camera.width * 0.78, camera.height * 0.17, 'satisfaction').setDepth(6).setScale(0.2)
+    let customers = scene.add.image(camera.width * 0.78, camera.height * 0.24, 'customers').setDepth(6).setScale(0.3)
+
+    let moneytext = scene.add.text(camera.width * 0.8, camera.height * 0.08, "").setFontFamily("Comic Sans MS").setFontSize(24).setDepth(6)
+    let satisfactiontext = scene.add.text(camera.width * 0.8, camera.height * 0.15, "").setFontFamily("Comic Sans MS").setFontSize(24).setDepth(6)
+    let customerstext = scene.add.text(camera.width * 0.8, camera.height * 0.22, "").setFontFamily("Comic Sans MS").setFontSize(24).setDepth(6)
+
     return {
         totalPlayTime: initialPlayTime || 0,
         day: Math.floor(initialPlayTime / (DAY_DURATION_SECONDS * 1000)) || 0,
@@ -33,7 +43,18 @@ export default function gameLoop(scene: CoronaShopSimScene, initialPlayTime?: nu
         scene,
         update,
         updateStats,
-        meta: {}
+        meta: {
+            statTextures: {
+                money,
+                satisfaction,
+                customers
+            },
+            statTexts: {
+                moneytext,
+                satisfactiontext,
+                customerstext
+            }
+        }
     }
 }
 
@@ -50,7 +71,7 @@ export interface GameLoop {
     customerHappiness: number,
     update: Function,
     updateStats: Function,
-    meta?: { [key: string]: any }
+    meta: { [key: string]: any }
 }
 
 function updateStats(gameLoop: GameLoop, graphics: Phaser.GameObjects.Graphics) {
@@ -69,16 +90,47 @@ function updateStats(gameLoop: GameLoop, graphics: Phaser.GameObjects.Graphics) 
             position.x,
             position.y,
             camera.height * 0.4,
-            camera.width * 0.2,
+            camera.width * 0.14,
             camera.height * 0.02
         )
         .strokeRoundedRect(
             position.x,
             position.y,
             camera.height * 0.4,
-            camera.width * 0.2,
+            camera.width * 0.14,
             camera.height * 0.02
-        )
+        );
+
+    let money = gameLoop.meta.statTextures.money as Phaser.GameObjects.Image
+    let satisfaction = gameLoop.meta.statTextures.satisfaction as Phaser.GameObjects.Image
+    let customers = gameLoop.meta.statTextures.customers as Phaser.GameObjects.Image
+
+    money.setX(camera.scrollX + (camera.width * 0.78))
+    satisfaction.setX(camera.scrollX + (camera.width * 0.78))
+    customers.setX(camera.scrollX + (camera.width * 0.78))
+
+    money.setY(camera.scrollY + (camera.height * 0.1))
+    satisfaction.setY(camera.scrollY + (camera.height * 0.17))
+    customers.setY(camera.scrollY + (camera.height * 0.24))
+
+    let moneytext = gameLoop.meta.statTexts.moneytext as Phaser.GameObjects.Text
+    let satisfactiontext = gameLoop.meta.statTexts.satisfactiontext as Phaser.GameObjects.Text
+    let customerstext = gameLoop.meta.statTexts.customerstext as Phaser.GameObjects.Text
+
+    let npcs_in_store = []
+
+    for (const npc in gameLoop.scene.npcs) {
+        if (gameLoop.scene.npcs.hasOwnProperty(npc)) {
+            const x = gameLoop.scene.npcs[npc];
+            if (gameLoop.scene.store.rectangle.contains(x.sprite.x, x.sprite.y)) {
+                npcs_in_store.push(x)
+            }
+        }
+    }
+
+    moneytext.setX(camera.scrollX + (camera.width * 0.8)).setY(camera.scrollY + (camera.height * 0.08)).setText(`${gameLoop.money} $`)
+    satisfactiontext.setX(camera.scrollX + (camera.width * 0.8)).setY(camera.scrollY + (camera.height * 0.15)).setText(`${gameLoop.customerHappiness}% satisfaction`)
+    customerstext.setX(camera.scrollX + (camera.width * 0.8)).setY(camera.scrollY + (camera.height * 0.22)).setText(`${npcs_in_store.length}/2 customers`)
 }
 
 function update(gameLoop: GameLoop, time: number, delta: number) {

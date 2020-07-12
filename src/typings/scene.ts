@@ -86,6 +86,9 @@ export class CoronaShopSimScene extends Phaser.Scene {
 
     preload() {
         loadCharacterAnimations(this)
+        this.load.image('money', '../../assets/icons/savings_icon.png')
+        this.load.image('satisfaction', '../../assets/icons/star.png')
+        this.load.image('customers', '../../assets/icons/customer_number_icon.png')
     }
 
     create() {

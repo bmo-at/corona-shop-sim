@@ -98,7 +98,7 @@ export default function Shelf(checkPoint: Phaser.GameObjects.GameObject, scene: 
             )
             shelf.dirtySprites.push(scene.physics.add.sprite(
                 scene.map.tileToWorldX(7) + 16,
-                scene.map.tileToWorldY(27) + 16,
+                scene.map.tileToWorldY(17) + 16,
                 'shelves_top_dirt')
                 .setAlpha(0)
                 .setDepth(4)
