@@ -2,7 +2,6 @@ import NPC from "./npc";
 import { CoronaShopSimScene } from "../typings/scene";
 import { randomIntFromInterval } from "../util/helperMethods";
 import Inspector from "./inspector";
-import { Tilemaps } from "phaser";
 
 /**
  * Day should last 5 minutes
@@ -33,6 +32,7 @@ export default function gameLoop(scene: CoronaShopSimScene, initialPlayTime?: nu
         customerHappiness: 100,
         scene,
         update,
+        updateStats,
         meta: {}
     }
 }
@@ -49,7 +49,36 @@ export interface GameLoop {
     money: number,
     customerHappiness: number,
     update: Function,
+    updateStats: Function,
     meta?: { [key: string]: any }
+}
+
+function updateStats(gameLoop: GameLoop, graphics: Phaser.GameObjects.Graphics) {
+
+    let camera = gameLoop.scene.cameras.main
+
+    let player = gameLoop.scene.player.sprite.body as Phaser.Physics.Arcade.Body
+
+    let position = new Phaser.Math.Vector2(camera.scrollX + camera.width * 0.75, camera.scrollY + camera.height * 0.05)
+
+    graphics.clear()
+    graphics.setActive(true)
+    // graphics.strokeRoundedRect()
+    graphics
+        .fillRoundedRect(
+            position.x,
+            position.y,
+            camera.height * 0.4,
+            camera.width * 0.2,
+            camera.height * 0.02
+        )
+        .strokeRoundedRect(
+            position.x,
+            position.y,
+            camera.height * 0.4,
+            camera.width * 0.2,
+            camera.height * 0.02
+        )
 }
 
 function update(gameLoop: GameLoop, time: number, delta: number) {

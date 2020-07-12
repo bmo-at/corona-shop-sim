@@ -45,11 +45,23 @@ export class CoronaShopSimScene extends Phaser.Scene {
         rectangle: Phaser.Geom.Rectangle
     }
 
+    declare statsGraphics: Phaser.GameObjects.Graphics
+
     declare wasd: Phaser.Types.Input.Keyboard.CursorKeys
 
     currentTool: Tools = Tools.STOP
 
     //#endregion
+
+    init() {
+        this.statsGraphics = this.add.graphics({
+            fillStyle: {
+                color: 0x000000, alpha: 1
+            }, lineStyle: {
+                color: 0xFFFFFF, alpha: 0.8, width: 4
+            }
+        }).setDepth(5)
+    }
 
     pause() {
         this.scene.pause()
@@ -344,6 +356,8 @@ export class CoronaShopSimScene extends Phaser.Scene {
         this.inspector?.update()
 
         //#endregion
+
+        this.gameLoop.updateStats(this.gameLoop, this.statsGraphics)
     }
 
 }

@@ -11,7 +11,7 @@ export default function Player(x: number, y: number, scene: CoronaShopSimScene):
                     color: 0x000000, alpha: 0.5, width: 1
                 }
             }).setDepth(1),
-            circle: new Phaser.Geom.Circle(x + 16, y + 16, 100)
+            circle: new Phaser.Geom.Circle(x + 16, y + 16, 120)
         },
         scene,
         update
