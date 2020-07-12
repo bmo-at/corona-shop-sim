@@ -157,7 +157,7 @@ export default class NPC extends Phaser.GameObjects.GameObject {
                                 }
                                 break;
                             case Tools.FORCEOUT:
-                                if (npc.scene.store.rectangle.contains((npc.body as Phaser.Physics.Arcade.Body).x, (npc.body as Phaser.Physics.Arcade.Body).y)) {
+                                if (npc.scene.store.rectangle.contains((npc.sprite.body as Phaser.Physics.Arcade.Body).x, (npc.sprite.body as Phaser.Physics.Arcade.Body).y)) {
                                     npc.npc_state.forcedOut = true
                                     npc.npc_state.waypoints = [
                                         npc.scene.checkPoints.FarmUpstate,

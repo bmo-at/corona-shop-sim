@@ -58,12 +58,7 @@ function update() {
             }
         }
 
-        if (npcs_in_store.length > 2 && inspector.scene.store.rectangle.contains(inspector.sprite.x, inspector.sprite.y) && inspector.scene.gameLoop.totalPlayTime > inspector.inspector_state.meta.strikeCooldown) {
-            inspector.inspector_state.strikes++
-            inspector.inspector_state.meta.strikeCooldown = inspector.scene.gameLoop.totalPlayTime + 20_000
-        }
-
-        if (inspector.inspector_state.strikes > 2) {
+        if (npcs_in_store.length > 2 && inspector.scene.store.rectangle.contains(inspector.sprite.x, inspector.sprite.y)) {
             inspector.scene.gameover()
         }
 
